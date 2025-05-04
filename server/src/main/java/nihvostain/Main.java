@@ -13,7 +13,7 @@ public class Main {
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
     private static final String PASSWORD = "1";
-    public static void main(String[] args) throws IOException, ClassNotFoundException, RecursionDepthExceededException, InputFromScriptException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, RecursionDepthExceededException, InputFromScriptException, SQLException {
 
         byte[] serializeReq = new byte[1024];
 

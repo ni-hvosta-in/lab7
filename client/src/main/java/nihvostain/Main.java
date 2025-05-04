@@ -8,6 +8,9 @@ import nihvostain.managers.Invoker;
 import nihvostain.managers.Registration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
@@ -35,7 +38,32 @@ public class Main {
         Communication communication = new Communication(serverPort, clientPort, bufferCapacity, timeout);
         RegistrationMessage message = null;
 
-        while (message != RegistrationMessage.AUTHORIZATION_SUCCESS | message != RegistrationMessage.REGISTRATION_SUCCESS) {
+        //УБРАТЬ АВТОРИЗАЦИЮ В КЛАСС
+        //СДЕЛАТЬ ВЫБОР СИМПОТИЧНЕЕ
+        ArrayList<String> actions = new ArrayList<>();
+        actions.add("1");
+        actions.add("2");
+
+        Map<String, TypeAuthentication> map = new HashMap<>();
+        map.put(actions.get(0), TypeAuthentication.AUTHORIZATION);
+        map.put(actions.get(1), TypeAuthentication.REGISTRATION);
+
+        while (message != RegistrationMessage.AUTHORIZATION_SUCCESS && message != RegistrationMessage.REGISTRATION_SUCCESS) {
+
+            TypeAuthentication action = null;
+            while (true) {
+                System.out.println("Выберите действие из списка:");
+                map.forEach((key, value) -> System.out.println(key + ": " + value.getMessage()));
+                System.out.print("Выберите действие ");
+                String key = sc.nextLine().trim();
+                if (!actions.contains(key)) {
+                    System.out.println("Такого действия нет");
+                } else {
+                    action = map.get(key);
+                    break;
+                }
+
+            }
 
             System.out.print("введите логин ");
             String login = sc.nextLine().trim();
@@ -43,9 +71,10 @@ public class Main {
             System.out.print("введите пароль ");
             String password = sc.nextLine().trim();
 
-            Registration registration = new Registration(login, password, communication);
+            Registration registration = new Registration(login, password, communication, action);
             try {
                 message = registration.register();
+                System.out.println(message);
             } catch (TimeoutException e) {
                 System.out.println("сервер временно не доступен");
             } catch (ClassNotFoundException e) {

@@ -12,6 +12,7 @@ import common.utility.*;
 import nihvostain.utility.Command;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -47,13 +48,13 @@ public class Invoker {
      * @throws InputFromScriptException ошибка в скрипте
      * @throws RecursionDepthExceededException ошибка глубины рекурсии
      */
-    public void scanning() throws InputFromScriptException, RecursionDepthExceededException, IOException {
+    public void scanning() throws InputFromScriptException, RecursionDepthExceededException, IOException, SQLException {
 
         if (depth > maxDepth) {
             throw new RecursionDepthExceededException();
         }
         Map<TypeCommand, Command> commands = new LinkedHashMap<>();
-
+        DataBasesManager dataBasesManager = new DataBasesManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "1");
         commands.put(TypeCommand.INFO, new InfoCommand(collectionManager, communication));
         commands.put(TypeCommand.SHOW, new ShowCommand(collectionManager, communication));
         commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication));
@@ -90,6 +91,7 @@ public class Invoker {
             try {
 
                 request = new Deserialize<Request>(message).deserialize();
+                System.out.println(request.getTypeRequest());
                 if (request.getTypeRequest() == TypeRequest.REQUEST_COMMAND){
                     Command command = commands.get(request.getName());
                     if (command.isValidParam(request.getParams()) == InvalidParamMessage.TRUE) {
@@ -109,8 +111,14 @@ public class Invoker {
                     }
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_REGISTRATION) {
                     System.out.println(request.getParams());
+                    System.out.println(dataBasesManager.CheckLogin(request.getParams().get(0)));
+                    if (!dataBasesManager.CheckLogin(request.getParams().get(0))){
+                        communication.send(new ResponseRegistry(RegistrationMessage.REGISTRATION_SUCCESS).serialize());
+                        dataBasesManager.insertUser(request.getParams().get(0), request.getParams().get(1));
+                    } else {
+                        communication.send(new ResponseRegistry(RegistrationMessage.WRONG_LOGIN).serialize());
+                    }
 
-                    communication.send(new ResponseRegistry(RegistrationMessage.WRONG_PASSWORD).serialize());
 
                 }
             } catch (ClassNotFoundException e) {
@@ -141,7 +149,7 @@ public class Invoker {
     }
 
     /**
-     * Устанавливает флаг файла
+     * Устанавливает флаг файла)
      * @param fileFlag читаем ли из файла
      */
     public void setFileFlag(boolean fileFlag) {
