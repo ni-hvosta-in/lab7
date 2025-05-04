@@ -92,16 +92,23 @@ public class Invoker {
 
                 request = new Deserialize<Request>(message).deserialize();
                 System.out.println(request.getTypeRequest());
+
                 if (request.getTypeRequest() == TypeRequest.REQUEST_COMMAND){
+
                     Command command = commands.get(request.getName());
                     if (command.isValidParam(request.getParams()) == InvalidParamMessage.TRUE) {
                         command.execute(request);
                     }
+
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_PARAM){
+
                     ResponseParam responseParam = new ResponseParam(commands.get(request.getName()).isValidParam(request.getParams()));
                     communication.send(responseParam.serialize());
+
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_PASSPORT) {
+
                     System.out.println("Паспорт" + request.getParams() + " " + Person.getPassportIDList().contains(request.getParams().get(0)));
+
                     if (Person.getPassportIDList().contains(request.getParams().get(0))) {
                         ResponseParam responseParam = new ResponseParam(InvalidParamMessage.FALSE);
                         communication.send(responseParam.serialize());
@@ -109,9 +116,9 @@ public class Invoker {
                         ResponseParam responseParam = new ResponseParam(InvalidParamMessage.TRUE);
                         communication.send(responseParam.serialize());
                     }
+
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_REGISTRATION) {
-                    System.out.println(request.getParams());
-                    System.out.println(dataBasesManager.CheckLogin(request.getParams().get(0)));
+
                     if (!dataBasesManager.CheckLogin(request.getParams().get(0))){
                         communication.send(new ResponseRegistry(RegistrationMessage.REGISTRATION_SUCCESS).serialize());
                         dataBasesManager.insertUser(request.getParams().get(0), request.getParams().get(1));
@@ -119,6 +126,17 @@ public class Invoker {
                         communication.send(new ResponseRegistry(RegistrationMessage.WRONG_LOGIN).serialize());
                     }
 
+                } else if (request.getTypeRequest() == TypeRequest.REQUEST_AUTHORIZATION) {
+
+                    if (!dataBasesManager.CheckLogin(request.getParams().get(0))){
+                        communication.send(new ResponseRegistry(RegistrationMessage.WRONG_LOGIN).serialize());
+                    } else {
+                        if (dataBasesManager.CheckPassword(request.getParams().get(0), request.getParams().get(1))){
+                            communication.send(new ResponseRegistry(RegistrationMessage.AUTHORIZATION_SUCCESS).serialize());
+                        } else {
+                            communication.send(new ResponseRegistry(RegistrationMessage.WRONG_PASSWORD).serialize());
+                        }
+                    }
 
                 }
             } catch (ClassNotFoundException e) {

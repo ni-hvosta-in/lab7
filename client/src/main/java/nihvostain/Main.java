@@ -70,7 +70,6 @@ public class Main {
 
             System.out.print("введите пароль ");
             String password = sc.nextLine().trim();
-
             Registration registration = new Registration(login, password, communication, action);
             try {
                 message = registration.register();

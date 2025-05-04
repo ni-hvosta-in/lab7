@@ -13,9 +13,16 @@ public class DataBasesManager {
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, login);
         ResultSet resultSet = statement.executeQuery();
+        return resultSet.next();
+    }
+
+    public boolean CheckPassword(String login, String password) throws SQLException {
+        String sql = "select password from PasswordUsers where login = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, login);
+        ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
-            System.out.println(resultSet.getString("login"));
-            return true;
+            return resultSet.getString("password").equals(password);
         } else {
             return false;
         }
@@ -28,4 +35,6 @@ public class DataBasesManager {
         statement.setString(2, password);
         statement.executeUpdate();
     }
+
+
 }
