@@ -107,6 +107,11 @@ public class Invoker {
                         ResponseParam responseParam = new ResponseParam(InvalidParamMessage.TRUE);
                         communication.send(responseParam.serialize());
                     }
+                } else if (request.getTypeRequest() == TypeRequest.REQUEST_REGISTRATION) {
+                    System.out.println(request.getParams());
+
+                    communication.send(new ResponseRegistry(RegistrationMessage.WRONG_PASSWORD).serialize());
+
                 }
             } catch (ClassNotFoundException e) {
                 System.out.println("ошибка передачи данных с клиента");

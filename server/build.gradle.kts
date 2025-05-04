@@ -18,7 +18,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.0")
     implementation ("com.fasterxml.jackson.core:jackson-databind:2.15.0")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0")
-
+    implementation("org.postgresql:postgresql:42.6.0")
     implementation(project(":common"))
 
 }

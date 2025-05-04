@@ -5,9 +5,11 @@ import common.model.*;
 import common.utility.*;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
+import nihvostain.managers.Registration;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.concurrent.TimeoutException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -31,6 +33,26 @@ public class Main {
         int clientPort = 8888;
         int bufferCapacity = 10000;
         Communication communication = new Communication(serverPort, clientPort, bufferCapacity, timeout);
+        RegistrationMessage message = null;
+
+        while (message != RegistrationMessage.AUTHORIZATION_SUCCESS | message != RegistrationMessage.REGISTRATION_SUCCESS) {
+
+            System.out.print("введите логин ");
+            String login = sc.nextLine().trim();
+
+            System.out.print("введите пароль ");
+            String password = sc.nextLine().trim();
+
+            Registration registration = new Registration(login, password, communication);
+            try {
+                message = registration.register();
+            } catch (TimeoutException e) {
+                System.out.println("сервер временно не доступен");
+            } catch (ClassNotFoundException e) {
+                System.out.println("ошибка передачи данных, попробуйте снова");
+            }
+        }
+
         Invoker invoker = new Invoker(sc, communication);
         try {
             System.out.print("~ ");
