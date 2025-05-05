@@ -49,6 +49,7 @@ public class Main {
 
         String login = "";
         String password = "";
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
         while (message != RegistrationMessage.AUTHORIZATION_SUCCESS && message != RegistrationMessage.REGISTRATION_SUCCESS) {
 
             TypeAuthentication action = null;
@@ -71,9 +72,17 @@ public class Main {
 
             System.out.print("введите пароль ");
             password = sc.nextLine().trim();
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            System.out.println(password);
+
             byte[] hash = digest.digest(password.getBytes());
-            password = hash.toString();
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                hexString.append(String.format("%02x", b));
+            }
+
+            password = hexString.toString();
+            System.out.println("Хеш пароля (SHA-256): " + password);
+
             Registration registration = new Registration(login, password, communication, action);
             try {
                 message = registration.register();
