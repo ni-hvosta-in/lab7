@@ -31,6 +31,8 @@ public class Invoker {
      */
     private boolean fileFlag = false;
 
+    private final String login;
+    private final String password;
 
     /**
      * Коммуникация
@@ -49,9 +51,13 @@ public class Invoker {
          * @param sc сканер
      */
 
-    public Invoker(Scanner sc, Communication communication) {
+    public Invoker(Scanner sc, Communication communication, String login, String password) {
+
         this.sc = sc;
         this.communication = communication;
+        this.login = login;
+        this.password = password;
+
     }
 
     /**
@@ -65,14 +71,14 @@ public class Invoker {
         commands.put("help", new HelpCommand(commands.values()));
         commands.put("show", new ShowCommand(communication));
         commands.put("info", new InfoCommand(communication));
-        commands.put("insert", new InsertCommand(communication));
-        commands.put("update", new UpdateCommand(communication));
-        commands.put("remove_key", new RemoveKeyCommand(communication));
+        commands.put("insert", new InsertCommand(communication, login, password));
+        commands.put("update", new UpdateCommand(communication, login, password));
+        commands.put("remove_key", new RemoveKeyCommand(communication, login, password));
         commands.put("clear", new ClearCommand(communication));
-        commands.put("execute_script", new ExecuteScriptCommand(communication));
+        commands.put("execute_script", new ExecuteScriptCommand(communication, login, password));
         commands.put("exit", new ExitCommand(communication));
         commands.put("remove_lower", new RemoveLowerCommand(communication));
-        commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication));
+        commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication, login, password));
         commands.put("remove_greater_key", new RemoveGreaterKeyCommand(communication));
         commands.put("group_counting_by_semester_enum", new GroupCountingBySemesterEnum(communication));
         commands.put("filter_contains_name", new FilterContainsNameCommand(communication));
@@ -93,19 +99,19 @@ public class Invoker {
 
                             if (command.getElementType().equals(TypeOfElement.PERSON)) {
                                 try {
-                                    args.addAll(new InputPerson(sc, fileFlag, command.skipValidateField(), communication).input());
+                                    args.addAll(new InputPerson(sc, fileFlag, command.skipValidateField(), communication, login, password).input());
                                 } catch (NoAdminException e){
                                     args.add(null);
                                 }
                             } else if (command.getElementType().equals(TypeOfElement.STUDYGROUP)) {
-                                args.addAll(new InputStudyGroup(sc, fileFlag, command.skipValidateField(), communication).input());
+                                args.addAll(new InputStudyGroup(sc, fileFlag, command.skipValidateField(), communication, login, password).input());
                             }
 
                             if (command == commands.get("help")) {
                                 command.request(args);
                             } else {
                                 try {
-                                    communication.send(command.request(args).serialize());
+                                    communication.send(command.request(args).addUser(login, password).serialize());
                                     byte[] message = communication.receive();
                                     System.out.println(new Deserialize<RequestObj>(message).deserialize().getRequest());
                                     if (command == commands.get("exit")) {
@@ -148,7 +154,7 @@ public class Invoker {
 
         }
         if (!fileFlag){
-            Invoker invoker = new Invoker(new Scanner(System.in), communication);
+            Invoker invoker = new Invoker(new Scanner(System.in), communication, login, password);
             invoker.setDepth(1);
             System.out.println("чтобы выйти из консоли введите exit");
             System.out.print("~ ");

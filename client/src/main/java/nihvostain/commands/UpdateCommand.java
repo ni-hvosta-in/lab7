@@ -16,9 +16,13 @@ import java.util.concurrent.TimeoutException;
  */
 public class UpdateCommand implements Command {
 
-    Communication communication;
-    public UpdateCommand(Communication communication) {
+    private final Communication communication;
+    private final String login;
+    private final String password;
+    public UpdateCommand(Communication communication, String login, String password) {
         this.communication = communication;
+        this.login = login;
+        this.password = password;
     }
 
     /**
@@ -73,10 +77,8 @@ public class UpdateCommand implements Command {
      */
     @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) throws IOException, TimeoutException, ClassNotFoundException {
-        byte [] message;
         Request request = new Request(TypeRequest.REQUEST_PARAM, TypeCommand.UPDATE, params);
-        message = request.serialize();
-        communication.send(message);
+        communication.send(request.addUser(login, password).serialize());
         byte[] response = communication.receive();
         return new Deserialize<ResponseParam>(response).deserialize().getParam();
     }

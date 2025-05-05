@@ -22,10 +22,14 @@ public class InputStudyGroup extends InputClass{
 
     private boolean skipFlag;
     private final Communication communication;
-    public InputStudyGroup(Scanner sc, boolean fileFlag, boolean skipFlag, Communication communication) {
+    private final String login;
+    private final String password;
+    public InputStudyGroup(Scanner sc, boolean fileFlag, boolean skipFlag, Communication communication, String login, String password) {
         super(sc, fileFlag);
         this.skipFlag = skipFlag;
         this.communication = communication;
+        this.login = login;
+        this.password = password;
     }
 
     /**
@@ -48,7 +52,7 @@ public class InputStudyGroup extends InputClass{
                 args.addAll(coordinates);
             } else if (fieldsStudyGroup == FieldsStudyGroup.GroupADMIN) {
                 try {
-                    ArrayList<String> groupAdmin = new InputPerson(this.getSc(), this.isFileFlag(), skipFlag, communication).input();
+                    ArrayList<String> groupAdmin = new InputPerson(this.getSc(), this.isFileFlag(), skipFlag, communication, login, password).input();
                     args.addAll(groupAdmin);
                 } catch (NoAdminException e){
                     args.add(null);

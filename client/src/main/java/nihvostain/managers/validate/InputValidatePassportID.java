@@ -18,10 +18,14 @@ public class InputValidatePassportID implements Validable {
     private final Scanner sc;
     private final boolean skipFlag;
     private final Communication communication;
-    public InputValidatePassportID(Scanner sc, boolean skipFlag, Communication communication) {
+    private final String login;
+    private final String password;
+    public InputValidatePassportID(Scanner sc, boolean skipFlag, Communication communication, String login, String password) {
         this.sc = sc;
         this.skipFlag = skipFlag;
         this.communication = communication;
+        this.login = login;
+        this.password = password;
     }
 
     /**
@@ -33,7 +37,7 @@ public class InputValidatePassportID implements Validable {
         ArrayList<String> passport = new ArrayList<>();
         passport.add(passportID);
         Request request = new Request(TypeRequest.REQUEST_PASSPORT, passport);
-        communication.send(request.serialize());
+        communication.send(request.addUser(login, password).serialize());
         InvalidParamMessage message = new Deserialize<ResponseParam>(communication.receive()).deserialize().getParam();
         return message != InvalidParamMessage.FALSE;
     }

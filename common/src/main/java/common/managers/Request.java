@@ -18,6 +18,8 @@ public class Request implements Serializable {
     private StudyGroup studyGroup = null;
     private Person person = null;
     private ArrayList<String> params;
+    private String login;
+    private String password;
 
     public Request(TypeRequest typeRequest, TypeCommand name, StudyGroup studyGroup, ArrayList<String> params) {
         this.typeRequest = typeRequest;
@@ -69,6 +71,12 @@ public class Request implements Serializable {
 
     }
 
+    public Request addUser(String login, String password) {
+        this.login = login;
+        this.password = password;
+        return this;
+    }
+
     public TypeCommand getName() {
         return name;
     }
@@ -95,5 +103,13 @@ public class Request implements Serializable {
 
     public Person getPerson() {
         return person;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

@@ -18,9 +18,14 @@ import java.util.concurrent.TimeoutException;
 public class ExecuteScriptCommand implements Command {
 
     private final Communication communication;
+    private final String login;
+    private final String password;
 
-    public ExecuteScriptCommand(Communication communication) {
+    public ExecuteScriptCommand(Communication communication, String login, String password) {
         this.communication = communication;
+        this.login = login;
+        this.password = password;
+
     }
 
     @Override
@@ -28,7 +33,7 @@ public class ExecuteScriptCommand implements Command {
         Scanner sc = null;
         try {
             sc = new Scanner(new File(args.get(0)));
-            Invoker invoker = new Invoker(sc, communication);
+            Invoker invoker = new Invoker(sc, communication, login, password);
             invoker.setFileFlag(true);
             try {
                 invoker.scanning();

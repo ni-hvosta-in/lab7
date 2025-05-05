@@ -8,14 +8,13 @@ import nihvostain.managers.Invoker;
 import nihvostain.managers.Registration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
 
         System.out.println("Добро пожаловать в консоль для управления коллекцией StudyGroup");
         System.out.println("Название файла для чтения и записи в него должно передаваться при помощи переменной окружения MY_VAR");
@@ -48,6 +47,8 @@ public class Main {
         map.put(actions.get(0), TypeAuthentication.AUTHORIZATION);
         map.put(actions.get(1), TypeAuthentication.REGISTRATION);
 
+        String login = "";
+        String password = "";
         while (message != RegistrationMessage.AUTHORIZATION_SUCCESS && message != RegistrationMessage.REGISTRATION_SUCCESS) {
 
             TypeAuthentication action = null;
@@ -66,10 +67,13 @@ public class Main {
             }
 
             System.out.print("введите логин ");
-            String login = sc.nextLine().trim();
+            login = sc.nextLine().trim();
 
             System.out.print("введите пароль ");
-            String password = sc.nextLine().trim();
+            password = sc.nextLine().trim();
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            password = hash.toString();
             Registration registration = new Registration(login, password, communication, action);
             try {
                 message = registration.register();
@@ -81,7 +85,7 @@ public class Main {
             }
         }
 
-        Invoker invoker = new Invoker(sc, communication);
+        Invoker invoker = new Invoker(sc, communication, login, password);
         try {
             System.out.print("~ ");
             invoker.scanning();

@@ -92,6 +92,7 @@ public class Invoker {
 
                 request = new Deserialize<Request>(message).deserialize();
                 System.out.println(request.getTypeRequest());
+                System.out.println(request.getLogin() + " " + request.getPassword());
 
                 if (request.getTypeRequest() == TypeRequest.REQUEST_COMMAND){
 
@@ -118,7 +119,6 @@ public class Invoker {
                     }
 
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_REGISTRATION) {
-
                     if (!dataBasesManager.CheckLogin(request.getParams().get(0))){
                         communication.send(new ResponseRegistry(RegistrationMessage.REGISTRATION_SUCCESS).serialize());
                         dataBasesManager.insertUser(request.getParams().get(0), request.getParams().get(1));

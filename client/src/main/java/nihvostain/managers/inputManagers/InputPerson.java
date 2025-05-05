@@ -19,10 +19,14 @@ public class InputPerson extends InputClass{
 
     private boolean skipFlag;
     private final Communication communication;
-    public InputPerson(Scanner sc, boolean fileFlag, boolean skipFlag, Communication communication) {
+    private final String login;
+    private final String password;
+    public InputPerson(Scanner sc, boolean fileFlag, boolean skipFlag, Communication communication, String login, String password) {
         super(sc, fileFlag);
         this.skipFlag = skipFlag;
         this.communication = communication;
+        this.login = login;
+        this.password = password;
     }
 
     /**
@@ -37,7 +41,7 @@ public class InputPerson extends InputClass{
         HashMap<FieldsPerson, Validable> validableHashMap = new HashMap<>();
         validableHashMap.put(FieldsPerson.NAME, new InputValidateNameP(this.getSc()));
         validableHashMap.put(FieldsPerson.BIRTHDAY, new InputValidateBirthday(this.getSc()));
-        validableHashMap.put(FieldsPerson.PassportID, new InputValidatePassportID(this.getSc(), skipFlag, communication));
+        validableHashMap.put(FieldsPerson.PassportID, new InputValidatePassportID(this.getSc(), skipFlag, communication, login, password));
         validableHashMap.put(FieldsPerson.EyeCOLOR, new InputValidateEye(this.getSc()));
         validableHashMap.put(FieldsPerson.HairCOLOR, new InputValidateHair(this.getSc()));
         args.add(validableHashMap.get(FieldsPerson.NAME).inputValidate(this.isFileFlag()));

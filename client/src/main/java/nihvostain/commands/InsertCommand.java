@@ -17,9 +17,12 @@ import java.util.concurrent.TimeoutException;
 public class InsertCommand implements Command {
 
     private final Communication communication;
-
-    public InsertCommand(Communication communication) {
+    private final String login;
+    private final String password;
+    public InsertCommand(Communication communication, String login, String password) {
         this.communication = communication;
+        this.login = login;
+        this.password = password;
     }
 
 
@@ -63,10 +66,8 @@ public class InsertCommand implements Command {
 
     @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) throws IOException, ClassNotFoundException, TimeoutException {
-        byte [] message;
         Request request = new Request(TypeRequest.REQUEST_PARAM, TypeCommand.INSERT, params);
-        message = request.serialize();
-        communication.send(message);
+        communication.send(request.addUser(login, password).serialize());
         byte[] response = communication.receive();
         return new Deserialize<ResponseParam>(response).deserialize().getParam();
     }

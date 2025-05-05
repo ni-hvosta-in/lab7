@@ -18,8 +18,12 @@ import java.util.concurrent.TimeoutException;
 public class RemoveKeyCommand implements Command {
 
     private final Communication communication;
-    public RemoveKeyCommand(Communication communication) {
+    private final String login;
+    private final String password;
+    public RemoveKeyCommand(Communication communication, String login, String password) {
     this.communication = communication;
+    this.login = login;
+    this.password = password;
     }
 
     /**
@@ -61,10 +65,8 @@ public class RemoveKeyCommand implements Command {
 
     @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) throws IOException, TimeoutException, ClassNotFoundException {
-        byte [] message;
         Request request = new Request(TypeRequest.REQUEST_PARAM, TypeCommand.REMOVE_KEY, params);
-        message = request.serialize();
-        communication.send(message);
+        communication.send(request.addUser(login, password).serialize());
         byte[] response = communication.receive();
         return new Deserialize<ResponseParam>(response).deserialize().getParam();
     }

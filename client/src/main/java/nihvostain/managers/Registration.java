@@ -33,6 +33,7 @@ public class Registration {
         } else {
             request = new Request(TypeRequest.REQUEST_AUTHORIZATION, user);
         }
+        request.addUser(login, password);
         communication.send(request.serialize());
 
         byte[] response = communication.receive();
