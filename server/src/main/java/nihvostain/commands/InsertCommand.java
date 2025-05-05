@@ -3,11 +3,13 @@ package nihvostain.commands;
 import common.exceptions.ExistingKeyException;
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -17,9 +19,11 @@ public class InsertCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-    public InsertCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public InsertCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
@@ -29,17 +33,25 @@ public class InsertCommand implements Command {
     public void execute(Request request) throws IOException {
 
         String key = request.getParams().get(0);
+        RequestObj req;
         try {
+            dataBasesManager.insertStudyGroup(key, request.getStudyGroup(), request.getLogin());
             collectionManager.insert(key, request.getStudyGroup());
             if (request.getStudyGroup().getGroupAdmin() != null) {
                 Person.addPassportID(request.getStudyGroup().getGroupAdmin().getPassportID());
             }
+            System.out.println("Добавил " + collectionManager.getStudyGroupList().get(key));
+            req = new RequestObj("Добавил " + collectionManager.getStudyGroupList().get(key));
+
         } catch (ExistingKeyException e) {
             System.out.println(e.getMessage());
+            req = new RequestObj("Ошибка исполнения");
+
+        }  catch (SQLException e) {
+            req = new RequestObj("Ошибка записи в базу данных");
+            System.out.println("Ошибка записи в базу данных");
         }
 
-        System.out.println("Добавил " + collectionManager.getStudyGroupList().get(key));
-        RequestObj req = new RequestObj("Добавил " + collectionManager.getStudyGroupList().get(key));
         communication.send(req.serialize());
     }
 
