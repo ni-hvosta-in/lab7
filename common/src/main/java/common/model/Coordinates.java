@@ -23,7 +23,7 @@ public class Coordinates implements ValidateClass, Serializable {
     private Integer x; //Поле не может быть null
 
     @JacksonXmlProperty(localName = "Y")
-    private BigDecimal y;
+    private float y;
 
     /**
      * Конструктор по умолчанию для сериализации
@@ -34,7 +34,7 @@ public class Coordinates implements ValidateClass, Serializable {
      * @param x координата x
      * @param y координата y
      */
-    public Coordinates(Integer x, BigDecimal y){
+    public Coordinates(Integer x, float y){
         this.x = x;
         this.y = y;
     }
@@ -47,6 +47,12 @@ public class Coordinates implements ValidateClass, Serializable {
         Coordinates.fields = fieldCoordinate;
     }
 
+    public Integer getX() {
+        return x;
+    }
+    public float getY() {
+        return y;
+    }
     /**
      * Возвращает строковое представление класса
      * @return текстовое представление класса координат

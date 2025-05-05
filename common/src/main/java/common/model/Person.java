@@ -143,6 +143,18 @@ public class Person implements Comparable<Person>, ValidateClass, Serializable {
         return passportID;
     }
 
+    public ZonedDateTime getBirthday() {
+        return birthday;
+    }
+
+    public EyeColor getEyeColor() {
+        return eyeColor;
+    }
+
+    public HairColor getHairColor() {
+        return hairColor;
+    }
+
     /**
      * @param o the object to be compared.
      * @return результат сравнения по именам

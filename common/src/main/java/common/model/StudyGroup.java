@@ -95,7 +95,7 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
         creationDate = LocalDateTime.now();
         name = args.get(0);
         Integer x = Integer.parseInt(args.get(1));
-        BigDecimal y = new BigDecimal(args.get(2));
+        float y = Float.parseFloat(args.get(2));
         coordinates = new Coordinates(x,y);
         studentsCount = Long.parseLong(args.get(3));
         formOfEducation = FormOfEducation.getFormOfEducation().get(args.get(4));
@@ -139,7 +139,7 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
         this.creationDate = LocalDateTime.now();
         name = args.get(0);
         Integer x = Integer.parseInt(args.get(1));
-        BigDecimal y = new BigDecimal(args.get(2));
+        float y = Float.parseFloat(args.get(2));
         coordinates = new Coordinates(x,y);
         studentsCount = Long.parseLong(args.get(3));
         formOfEducation = FormOfEducation.getFormOfEducation().get(args.get(4));
@@ -297,6 +297,22 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
      */
     public SemesterEnum getSemesterEnum(){
         return this.semesterEnum;
+    }
+
+    public Coordinates getCoordinates() {
+        return this.coordinates;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return this.creationDate;
+    }
+
+    public long getStudentsCount() {
+        return this.studentsCount;
+    }
+
+    public FormOfEducation getFormOfEducation() {
+        return this.formOfEducation;
     }
 
     public void setGroupAdmin(Person groupAdmin) {
