@@ -4,6 +4,7 @@ import common.exceptions.InputFromScriptException;
 import common.exceptions.RecursionDepthExceededException;
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.managers.Invoker;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ public class Main {
         byte[] serializeReq = new byte[1024];
 
         CollectionManager collectionManager = new CollectionManager();
+        DataBasesManager dataBasesManager = new DataBasesManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "1");
+        dataBasesManager.parseStudyGroups();
         collectionManager.load(System.getenv("MY_VAR"));
         int serverPort = 9898;
         int bufferCapacity = 10000;

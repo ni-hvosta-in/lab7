@@ -35,7 +35,8 @@ public class InsertCommand implements Command {
         String key = request.getParams().get(0);
         RequestObj req;
         try {
-            dataBasesManager.insertStudyGroup(key, request.getStudyGroup(), request.getLogin());
+            long id = dataBasesManager.insertStudyGroup(key, request.getStudyGroup(), request.getLogin());
+            request.getStudyGroup().setID(id);
             collectionManager.insert(key, request.getStudyGroup());
             if (request.getStudyGroup().getGroupAdmin() != null) {
                 Person.addPassportID(request.getStudyGroup().getGroupAdmin().getPassportID());
@@ -48,8 +49,9 @@ public class InsertCommand implements Command {
             req = new RequestObj("Ошибка исполнения");
 
         }  catch (SQLException e) {
-            req = new RequestObj("Ошибка записи в базу данных");
-            System.out.println("Ошибка записи в базу данных");
+            throw new RuntimeException(e);
+            //req = new RequestObj("Ошибка записи в базу данных");
+            //System.out.println("Ошибка записи в базу данных");
         }
 
         communication.send(req.serialize());

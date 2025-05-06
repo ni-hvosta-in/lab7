@@ -38,4 +38,14 @@ public enum FormOfEducation {
         return formOfEducationMap;
     }
 
+    static public Map<String, FormOfEducation> getFormOfEducationFromDB(){
+        Map <String, FormOfEducation> formOfEducationMap = new HashMap<>();
+
+        formOfEducationMap.put(DISTANCE_EDUCATION.toString(), DISTANCE_EDUCATION);
+        formOfEducationMap.put(FULL_TIME_EDUCATION.toString(), FULL_TIME_EDUCATION);
+        formOfEducationMap.put(EVENING_CLASSES.toString(), EVENING_CLASSES);
+
+        return formOfEducationMap;
+    }
+
 }

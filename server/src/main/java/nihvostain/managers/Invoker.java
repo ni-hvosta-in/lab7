@@ -57,7 +57,7 @@ public class Invoker {
         DataBasesManager dataBasesManager = new DataBasesManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "1");
         commands.put(TypeCommand.INFO, new InfoCommand(collectionManager, communication));
         commands.put(TypeCommand.SHOW, new ShowCommand(collectionManager, communication));
-        commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication));
+        commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.UPDATE, new UpdateCommand(collectionManager, communication));
         commands.put(TypeCommand.REMOVE_KEY, new RemoveKeyCommand(collectionManager, communication));
         commands.put(TypeCommand.CLEAR, new ClearCommand(collectionManager, communication));
@@ -107,8 +107,6 @@ public class Invoker {
                     communication.send(responseParam.serialize());
 
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_PASSPORT) {
-
-                    System.out.println("Паспорт" + request.getParams() + " " + Person.getPassportIDList().contains(request.getParams().get(0)));
 
                     if (Person.getPassportIDList().contains(request.getParams().get(0))) {
                         ResponseParam responseParam = new ResponseParam(InvalidParamMessage.FALSE);

@@ -72,7 +72,6 @@ public class Main {
 
             System.out.print("введите пароль ");
             password = sc.nextLine().trim();
-            System.out.println(password);
 
             byte[] hash = digest.digest(password.getBytes());
             StringBuilder hexString = new StringBuilder();
@@ -81,7 +80,6 @@ public class Main {
             }
 
             password = hexString.toString();
-            System.out.println("Хеш пароля (SHA-256): " + password);
 
             Registration registration = new Registration(login, password, communication, action);
             try {

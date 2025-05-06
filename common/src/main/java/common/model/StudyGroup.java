@@ -60,13 +60,13 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
      * @param semesterEnum семестр
      * @param groupAdmin староста
      */
-    public StudyGroup (String name, Coordinates coordinates,
+    public StudyGroup (long id, String name, Coordinates coordinates, LocalDateTime creationDate,
                        long studentsCount, FormOfEducation formOfEducation,
                        SemesterEnum semesterEnum, Person groupAdmin){
-        this.id = generateIdFromFile();
+        this.id = id;
         this.name = name;
         this.coordinates = coordinates;
-        this.creationDate = LocalDateTime.now();
+        this.creationDate = creationDate;
         this.studentsCount = studentsCount;
         this.formOfEducation = formOfEducation;
         this.semesterEnum = semesterEnum;
@@ -76,10 +76,10 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
     /**
      * Конструктор без старосты
      */
-    public StudyGroup (String name, Coordinates coordinates,
+    public StudyGroup (long id, String name, Coordinates coordinates,
                        long studentsCount, FormOfEducation formOfEducation,
                        SemesterEnum semesterEnum){
-        this.id = generateIdFromFile();
+        this.id = id;
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = LocalDateTime.now();
@@ -172,7 +172,7 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
     }
 
     public void generateFields(){
-        this.id = generateIdFromFile();
+        //this.id = generateIdFromFile();
         this.creationDate = LocalDateTime.now();
     }
 
@@ -244,7 +244,10 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
             info += "Нет старосты";
         } else {
             info += "Староста группы: " + groupAdmin.getName() + "\n";
-            info += "Паспорт старосты: " + groupAdmin.getPassportID();
+            info += "День рождения старосты: " + groupAdmin.getBirthday() + "\n";
+            info += "Паспорт старосты: " + groupAdmin.getPassportID() + "\n";
+            info += "Цвет глаз старосты: " + groupAdmin.getEyeColor() + "\n";
+            info += "Цвет волос старост: " + groupAdmin.getHairColor();
         }
         return info;
     }

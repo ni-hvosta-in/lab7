@@ -40,4 +40,15 @@ public enum SemesterEnum {
 
         return semesterMap;
     }
+
+    static public Map<String, SemesterEnum> getSemesterFromDB(){
+        Map <String, SemesterEnum> semesterMap = new HashMap<>();
+        semesterMap.put(FIRST.toString(), FIRST);
+        semesterMap.put(SECOND.toString(), SECOND);
+        semesterMap.put(THIRD.toString(), THIRD);
+        semesterMap.put(SIXTH.toString(), SIXTH);
+        semesterMap.put(SEVENTH.toString(), SEVENTH);
+
+        return semesterMap;
+    }
 }

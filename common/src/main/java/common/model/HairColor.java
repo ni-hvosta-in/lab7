@@ -32,4 +32,15 @@ public enum HairColor {
 
         return colorMap;
     }
+
+    static public Map <String, HairColor> getColorsFromDB(){
+        Map <String, HairColor> colorMap = new HashMap<>();
+        colorMap.put(RED.toString(), RED);
+        colorMap.put(BLACK.toString(), BLACK);
+        colorMap.put(ORANGE.toString(), ORANGE);
+        colorMap.put(WHITE.toString(), WHITE);
+        colorMap.put(BROWN.toString(), BROWN);
+
+        return colorMap;
+    }
 }

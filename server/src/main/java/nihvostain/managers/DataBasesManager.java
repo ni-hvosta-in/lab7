@@ -1,8 +1,12 @@
 package nihvostain.managers;
 
-import common.model.StudyGroup;
+import common.model.*;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class DataBasesManager {
     private final Connection connection;
@@ -38,10 +42,10 @@ public class DataBasesManager {
         statement.executeUpdate();
     }
 
-    public void insertStudyGroup (String key, StudyGroup studyGroup, String login) throws SQLException {
+    public long insertStudyGroup (String key, StudyGroup studyGroup, String login) throws SQLException {
         String sql = "insert into StudyGroups (key, name, x, y, creationDate, studentsCount," +
                 " formOfEducation, semesterEnum, nameP, birthday, passportID, eyeColor, hairColor, login)" +
-                "  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, key);
         statement.setString(2, studyGroup.getName());
@@ -51,6 +55,7 @@ public class DataBasesManager {
         statement.setLong(6, studyGroup.getStudentsCount());
         statement.setString(7, studyGroup.getFormOfEducation().toString());
         statement.setString(8, studyGroup.getSemesterEnum().toString());
+
         if (studyGroup.getGroupAdmin() != null) {
             statement.setString(9, studyGroup.getGroupAdmin().getName());
             if (studyGroup.getGroupAdmin().getBirthday() != null) {
@@ -65,6 +70,7 @@ public class DataBasesManager {
                 statement.setString(12, null);
             }
             statement.setString(13, studyGroup.getGroupAdmin().getHairColor().toString());
+
         } else {
             statement.setString(9, null);
             statement.setString(10, null);
@@ -72,9 +78,50 @@ public class DataBasesManager {
             statement.setString(12, null);
             statement.setString(13, null);
         }
-        statement.setString(14, login);
-        statement.executeUpdate();
 
+        statement.setString(14, login);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        return res.getLong("id");
+
+    }
+
+    public HashMap<String, StudyGroup> parseStudyGroups () throws SQLException {
+        HashMap<String, StudyGroup> studyGroups = new LinkedHashMap<>();
+        String sql = "select * from StudyGroups";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            String key = resultSet.getString("key");
+            long id = resultSet.getLong("id");
+            String name = resultSet.getString("name");
+            int x = resultSet.getInt("x");
+            float y = resultSet.getFloat("y");
+            LocalDateTime creationDate = resultSet.getTimestamp("creationDate").toLocalDateTime();
+            long studentsCount = resultSet.getLong("studentsCount");
+            FormOfEducation formOfEducation = FormOfEducation.getFormOfEducationFromDB().get(resultSet.getString("formOfEducation"));
+            SemesterEnum semesterEnum = SemesterEnum.getSemesterFromDB().get(resultSet.getString("semesterEnum"));
+            Person person = null;
+            String nameP = resultSet.getString("nameP");
+            if (nameP != null) {
+                ZonedDateTime birthday;
+                try {
+                    birthday = ZonedDateTime.parse(resultSet.getString("birthday"));
+                } catch (NullPointerException e) {
+                    birthday = null;
+                }
+                String passportID = resultSet.getString("passportID");
+                EyeColor eyeColor = EyeColor.getColorsFromDB().get(resultSet.getString("eyeColor"));
+                HairColor hairColor = HairColor.getColorsFromDB().get(resultSet.getString("hairColor"));
+                person = new Person(nameP, birthday, passportID, eyeColor, hairColor);
+            }
+            Coordinates coordinates = new Coordinates(x, y);
+            StudyGroup studyGroup = new StudyGroup(id, name, coordinates, creationDate, studentsCount, formOfEducation, semesterEnum, person);
+            System.out.println(studyGroup);
+            studyGroups.put(key, studyGroup);
+
+        }
+        return studyGroups;
     }
 
 }
