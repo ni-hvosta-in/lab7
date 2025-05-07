@@ -21,7 +21,7 @@ public class Main {
         CollectionManager collectionManager = new CollectionManager();
         DataBasesManager dataBasesManager = new DataBasesManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "1");
         dataBasesManager.parseStudyGroups();
-        collectionManager.load(System.getenv("MY_VAR"));
+        collectionManager.loadDb(dataBasesManager);
         int serverPort = 9898;
         int bufferCapacity = 10000;
         Communication communication = new Communication(serverPort, bufferCapacity);
