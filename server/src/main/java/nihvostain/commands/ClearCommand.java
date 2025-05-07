@@ -6,21 +6,25 @@ import common.model.TypeOfElement;
 import common.utility.InvalidParamMessage;
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Команда очистки коллекции
+ * Команда очистки коллекции Модификация
  */
 public class ClearCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-    public ClearCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public ClearCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
@@ -28,8 +32,25 @@ public class ClearCommand implements Command {
      */
     @Override
     public void execute(Request request) throws IOException {
-        collectionManager.clear();
-        RequestObj req = new RequestObj("отчистил");
+
+        RequestObj req;
+        ArrayList<String> keysToRemove = new ArrayList<>();
+        try {
+            for (String key : collectionManager.getStudyGroupList().keySet()) {
+                if (dataBasesManager.allowModification(key, request.getLogin())) {
+                    System.out.println(key);
+                    keysToRemove.add(key);
+                    dataBasesManager.removeKey(key);
+                }
+            }
+            for (String key : keysToRemove) {
+                collectionManager.removeKey(key);
+            }
+            req = new RequestObj("отчистил ваши объекты");
+        } catch (SQLException e){
+            req = new RequestObj("Ошибка удаления из базы данных");
+            System.out.println("Ошибка удаления из базы данных");
+        }
         communication.send(req.serialize());
     }
 

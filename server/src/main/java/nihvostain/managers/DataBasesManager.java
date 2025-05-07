@@ -14,7 +14,7 @@ public class DataBasesManager {
         connection = DriverManager.getConnection(url, user, password);
     }
 
-    public boolean CheckLogin(String login) throws SQLException {
+    public boolean checkLogin(String login) throws SQLException {
         String sql = "select login from PasswordUsers where login = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, login);
@@ -22,7 +22,23 @@ public class DataBasesManager {
         return resultSet.next();
     }
 
-    public boolean CheckPassword(String login, String password) throws SQLException {
+    public boolean allowModification(String key, String login) throws SQLException {
+        String sql = "select login from StudyGroups where key = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, key);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        return resultSet.getString("login").equals(login);
+    }
+
+    public void removeKey(String key) throws SQLException {
+        String sql = "delete from StudyGroups where key = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, key);
+        statement.executeUpdate();
+    }
+
+    public boolean checkPassword(String login, String password) throws SQLException {
         String sql = "select password from PasswordUsers where login = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, login);
