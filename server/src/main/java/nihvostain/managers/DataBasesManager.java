@@ -59,6 +59,44 @@ public class DataBasesManager {
         statement.executeUpdate();
     }
 
+    public void updateStudyGroupKey (String key, StudyGroup studyGroup) throws SQLException {
+
+        String sql = "update StudyGroups set name = ?, x = ?, y = ?, creationDate = ?, studentsCount = ?, formOfEducation = ?, semesterEnum = ?, nameP = ?, birthday = ?, passportID = ?, eyeColor = ?, hairColor = ? where key = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, studyGroup.getName());
+        statement.setLong(2, studyGroup.getCoordinates().getX());
+        statement.setFloat(3, studyGroup.getCoordinates().getY());
+        statement.setTimestamp(4, Timestamp.valueOf(studyGroup.getCreationDate()));
+        statement.setLong(5, studyGroup.getStudentsCount());
+        statement.setString(6, studyGroup.getFormOfEducation().toString());
+        statement.setString(7, studyGroup.getSemesterEnum().toString());
+
+        if (studyGroup.getGroupAdmin() != null) {
+            statement.setString(8, studyGroup.getGroupAdmin().getName());
+            if (studyGroup.getGroupAdmin().getBirthday() != null) {
+                statement.setString(9, studyGroup.getGroupAdmin().getBirthday().toString());
+            } else {
+                statement.setString(9, null);
+            }
+            statement.setString(10, studyGroup.getGroupAdmin().getPassportID());
+            if (studyGroup.getGroupAdmin().getEyeColor() != null) {
+                statement.setString(11, studyGroup.getGroupAdmin().getEyeColor().toString());
+            } else {
+                statement.setString(11, null);
+            }
+            statement.setString(12, studyGroup.getGroupAdmin().getHairColor().toString());
+
+        } else {
+            statement.setString(8, null);
+            statement.setString(9, null);
+            statement.setString(10, null);
+            statement.setString(11, null);
+            statement.setString(12, null);
+        }
+        statement.setString(13, key);
+        statement.executeUpdate();
+    }
+
     public long insertStudyGroup (String key, StudyGroup studyGroup, String login) throws SQLException {
         String sql = "insert into StudyGroups (key, name, x, y, creationDate, studentsCount," +
                 " formOfEducation, semesterEnum, nameP, birthday, passportID, eyeColor, hairColor, login)" +
@@ -111,6 +149,7 @@ public class DataBasesManager {
         while (resultSet.next()) {
             String key = resultSet.getString("key");
             long id = resultSet.getLong("id");
+            StudyGroup.addId(id);
             String name = resultSet.getString("name");
             int x = resultSet.getInt("x");
             float y = resultSet.getFloat("y");
@@ -128,6 +167,7 @@ public class DataBasesManager {
                     birthday = null;
                 }
                 String passportID = resultSet.getString("passportID");
+                Person.addPassportID(passportID);
                 EyeColor eyeColor = EyeColor.getColorsFromDB().get(resultSet.getString("eyeColor"));
                 HairColor hairColor = HairColor.getColorsFromDB().get(resultSet.getString("hairColor"));
                 person = new Person(nameP, birthday, passportID, eyeColor, hairColor);

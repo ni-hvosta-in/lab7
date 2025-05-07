@@ -58,12 +58,12 @@ public class Invoker {
         commands.put(TypeCommand.INFO, new InfoCommand(collectionManager, communication));
         commands.put(TypeCommand.SHOW, new ShowCommand(collectionManager, communication));
         commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication, dataBasesManager));
-        commands.put(TypeCommand.UPDATE, new UpdateCommand(collectionManager, communication));
+        commands.put(TypeCommand.UPDATE, new UpdateCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.REMOVE_KEY, new RemoveKeyCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.CLEAR, new ClearCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.EXIT, new ExitCommand(collectionManager, communication));
         commands.put(TypeCommand.REMOVE_LOWER, new  RemoveLowerCommand(collectionManager, communication, dataBasesManager));
-        commands.put(TypeCommand.REPLACE_IF_GREATER, new ReplaceIfGreaterCommand(collectionManager, communication));
+        commands.put(TypeCommand.REPLACE_IF_GREATER, new ReplaceIfGreaterCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.REMOVE_GREATER_KEY, new RemoveGreaterKeyCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.GROUP_COUNTING_BY_SEMESTER_ENUM, new GroupCountingBySemesterEnum(collectionManager, communication));
         commands.put(TypeCommand.FILTER_CONTAINS_NAME, new FilterContainsNameCommand(collectionManager, communication));
@@ -98,7 +98,13 @@ public class Invoker {
 
                     Command command = commands.get(request.getName());
                     if (command.isValidParam(request.getParams()) == InvalidParamMessage.TRUE) {
-                        command.execute(request);
+                        try {
+                            command.execute(request);
+                        } catch (SQLException e) {
+                            System.out.println(e.getMessage());
+                            communication.send(new RequestObj("Ошибка работы с бд").serialize());
+                        }
+
                     }
 
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_PARAM){

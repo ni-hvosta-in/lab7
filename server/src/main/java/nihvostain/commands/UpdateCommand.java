@@ -2,44 +2,64 @@ package nihvostain.commands;
 
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * Команда обновления элемента по заданному id
+ * Команда обновления элемента по заданному id Модификация
  */
 public class UpdateCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-
-    public UpdateCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public UpdateCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public void execute(Request request) throws IOException, SQLException {
         try {
 
             long id = Long.parseLong(request.getParams().get(0));
             StudyGroup studyGroup = request.getStudyGroup();
             studyGroup.setID(id);
-            collectionManager.getStudyGroupList().entrySet()
-                    .stream()
-                    .filter(x -> x.getValue().getId().equals(id))
-                    .limit(1)
-                    .forEach(x -> collectionManager.updateStudyGroup(x.getKey(), studyGroup));
+            String key = null;
+            for (Map.Entry<String, StudyGroup> pair : collectionManager.getSortedStudyGroupList().entrySet()){
+                if (pair.getValue().getId() == id){
+                    key = pair.getKey();
+                    break;
+                }
+            }
+            if (dataBasesManager.allowModification(key, request.getLogin())){
 
-            RequestObj req = new RequestObj("обновил id " + id + " " + studyGroup);
-            communication.send(req.serialize());
+                dataBasesManager.updateStudyGroupKey(key, studyGroup);
+                collectionManager.getStudyGroupList().entrySet()
+                        .stream()
+                        .filter(x -> x.getValue().getId().equals(id))
+                        .limit(1)
+                        .forEach(x -> collectionManager.updateStudyGroup(x.getKey(), studyGroup));
+
+                RequestObj req = new RequestObj("обновил id " + id + " " + studyGroup);
+                communication.send(req.serialize());
+            } else {
+                RequestObj req = new RequestObj("объект принадлежит другому человеку");
+                communication.send(req.serialize());
+            }
+
 
             /*for (Map.Entry<String, StudyGroup> pair : collectionManager.getStudyGroupList().entrySet()){
                 if (pair.getValue().getId().equals(id)) {
