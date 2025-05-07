@@ -86,8 +86,8 @@ public class DataBasesManager {
 
     }
 
-    public HashMap<String, StudyGroup> parseStudyGroups () throws SQLException {
-        HashMap<String, StudyGroup> studyGroups = new LinkedHashMap<>();
+    public LinkedHashMap<String, StudyGroup> parseStudyGroups () throws SQLException {
+        LinkedHashMap<String, StudyGroup> studyGroups = new LinkedHashMap<>();
         String sql = "select * from StudyGroups";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
