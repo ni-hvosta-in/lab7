@@ -78,6 +78,9 @@ public class CollectionManager {  //receiver
         }
     }
 
+    public void loadDb(DataBasesManager dataBasesManager) throws SQLException {
+        studyGroupList = dataBasesManager.parseStudyGroups();
+    }
     /**
      * информация о коллекции
      */
