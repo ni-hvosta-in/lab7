@@ -2,24 +2,27 @@ package nihvostain.commands;
 
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Команда удаления элементов меньших заданному
+ * Команда удаления элементов меньших заданному Модификация
  */
 public class RemoveLowerCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-
-    public RemoveLowerCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public RemoveLowerCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
@@ -31,9 +34,28 @@ public class RemoveLowerCommand implements Command {
         //Map<String,StudyGroup> studyGroupList = new LinkedHashMap<>();
         //StudyGroup studyGroup = new StudyGroup(0L, args); ВНИМАНИЕ
         StudyGroup studyGroup = request.getStudyGroup();
+
         if (!collectionManager.getStudyGroupList().isEmpty()) {
 
-            collectionManager.getStudyGroupList().values().removeIf(st -> st.compareTo(studyGroup) < 0);
+            ArrayList<String> keyToRemove = new ArrayList<>();
+            collectionManager.getStudyGroupList().entrySet().stream()
+                    .filter(x -> {
+                        try {
+                            return x.getValue().compareTo(studyGroup) < 0 & dataBasesManager.allowModification(x.getKey(), request.getLogin());
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .forEach(x -> {
+                        keyToRemove.add(x.getKey());
+                        try {
+                            dataBasesManager.removeKey(x.getKey());
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+            keyToRemove.forEach(collectionManager::removeKey);
+
             new ShowCommand(collectionManager, communication).execute(request);
             /*
             for (Map.Entry<String, StudyGroup> pair : collectionManager.getStudyGroupList().entrySet()) {

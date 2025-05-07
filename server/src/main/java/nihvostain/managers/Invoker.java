@@ -62,9 +62,9 @@ public class Invoker {
         commands.put(TypeCommand.REMOVE_KEY, new RemoveKeyCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.CLEAR, new ClearCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.EXIT, new ExitCommand(collectionManager, communication));
-        commands.put(TypeCommand.REMOVE_LOWER, new  RemoveLowerCommand(collectionManager, communication ));
+        commands.put(TypeCommand.REMOVE_LOWER, new  RemoveLowerCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.REPLACE_IF_GREATER, new ReplaceIfGreaterCommand(collectionManager, communication));
-        commands.put(TypeCommand.REMOVE_GREATER_KEY, new RemoveGreaterKeyCommand(collectionManager, communication));
+        commands.put(TypeCommand.REMOVE_GREATER_KEY, new RemoveGreaterKeyCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.GROUP_COUNTING_BY_SEMESTER_ENUM, new GroupCountingBySemesterEnum(collectionManager, communication));
         commands.put(TypeCommand.FILTER_CONTAINS_NAME, new FilterContainsNameCommand(collectionManager, communication));
         commands.put(TypeCommand.FILTER_GREATER_THAN_GROUP_ADMIN, new FilterGreaterThanGroupAdminCommand(collectionManager, communication));
