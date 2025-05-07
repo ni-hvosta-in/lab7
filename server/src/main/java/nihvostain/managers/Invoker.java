@@ -60,7 +60,7 @@ public class Invoker {
         commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.UPDATE, new UpdateCommand(collectionManager, communication));
         commands.put(TypeCommand.REMOVE_KEY, new RemoveKeyCommand(collectionManager, communication));
-        commands.put(TypeCommand.CLEAR, new ClearCommand(collectionManager, communication));
+        commands.put(TypeCommand.CLEAR, new ClearCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.EXIT, new ExitCommand(collectionManager, communication));
         commands.put(TypeCommand.REMOVE_LOWER, new  RemoveLowerCommand(collectionManager, communication ));
         commands.put(TypeCommand.REPLACE_IF_GREATER, new ReplaceIfGreaterCommand(collectionManager, communication));
@@ -117,7 +117,7 @@ public class Invoker {
                     }
 
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_REGISTRATION) {
-                    if (!dataBasesManager.CheckLogin(request.getParams().get(0))){
+                    if (!dataBasesManager.checkLogin(request.getParams().get(0))){
                         communication.send(new ResponseRegistry(RegistrationMessage.REGISTRATION_SUCCESS).serialize());
                         dataBasesManager.insertUser(request.getParams().get(0), request.getParams().get(1));
                     } else {
@@ -126,10 +126,10 @@ public class Invoker {
 
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_AUTHORIZATION) {
 
-                    if (!dataBasesManager.CheckLogin(request.getParams().get(0))){
+                    if (!dataBasesManager.checkLogin(request.getParams().get(0))){
                         communication.send(new ResponseRegistry(RegistrationMessage.WRONG_LOGIN).serialize());
                     } else {
-                        if (dataBasesManager.CheckPassword(request.getParams().get(0), request.getParams().get(1))){
+                        if (dataBasesManager.checkPassword(request.getParams().get(0), request.getParams().get(1))){
                             communication.send(new ResponseRegistry(RegistrationMessage.AUTHORIZATION_SUCCESS).serialize());
                         } else {
                             communication.send(new ResponseRegistry(RegistrationMessage.WRONG_PASSWORD).serialize());
