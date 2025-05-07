@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DataBasesManager {
     private final Connection connection;
@@ -102,8 +103,8 @@ public class DataBasesManager {
 
     }
 
-    public LinkedHashMap<String, StudyGroup> parseStudyGroups () throws SQLException {
-        LinkedHashMap<String, StudyGroup> studyGroups = new LinkedHashMap<>();
+    public Map<String, StudyGroup> parseStudyGroups () throws SQLException {
+        Map<String, StudyGroup> studyGroups = new LinkedHashMap<>();
         String sql = "select * from StudyGroups";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();

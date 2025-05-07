@@ -2,23 +2,27 @@ package nihvostain.commands;
 
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Команда удаления элементов, ключ которых больше заданных
+ * Команда удаления элементов, ключ которых больше заданных Модификация
  */
 public class RemoveGreaterKeyCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-    public RemoveGreaterKeyCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public RemoveGreaterKeyCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
@@ -28,8 +32,19 @@ public class RemoveGreaterKeyCommand implements Command {
     public void execute(Request request) throws IOException {
 
         String key = request.getParams().get(0);
-        collectionManager.getStudyGroupList().keySet().removeIf(str -> str.compareTo(key) > 0);
-        new ShowCommand(collectionManager, communication).execute(request);
+        ArrayList<String> keyToRemove = new ArrayList<>();
+        try {
+            for (String k : collectionManager.getStudyGroupList().keySet()) {
+                if (k.compareTo(key) > 0 & dataBasesManager.allowModification(k, request.getLogin())){
+                    dataBasesManager.removeKey(k);
+                    keyToRemove.add(k);
+                }
+            }
+            keyToRemove.forEach(collectionManager::removeKey);
+            new ShowCommand(collectionManager, communication).execute(request);
+        } catch (SQLException e){
+            RequestObj requestObj = new RequestObj("Ошибка работы с БД");
+        }
 
     }
 
