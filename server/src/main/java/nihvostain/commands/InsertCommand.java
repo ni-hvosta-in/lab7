@@ -49,9 +49,8 @@ public class InsertCommand implements Command {
             req = new RequestObj("Ошибка исполнения");
 
         }  catch (SQLException e) {
-            throw new RuntimeException(e);
-            //req = new RequestObj("Ошибка записи в базу данных");
-            //System.out.println("Ошибка записи в базу данных");
+            req = new RequestObj("Ошибка записи в базу данных");
+            System.out.println("Ошибка записи в базу данных");
         }
 
         communication.send(req.serialize());
