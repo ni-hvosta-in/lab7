@@ -112,6 +112,7 @@ public class Invoker {
                     ResponseParam responseParam = new ResponseParam(commands.get(request.getName()).isValidParam(request.getParams()));
                     communication.send(responseParam.serialize());
 
+
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_PASSPORT) {
 
                     if (Person.getPassportIDList().contains(request.getParams().get(0))) {

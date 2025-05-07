@@ -2,35 +2,40 @@ package nihvostain.commands;
 
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Команда замена значения по ключу, если новое значение больше старого
+ * Команда замена значения по ключу, если новое значение больше старого Модификация5
  */
 public class ReplaceIfGreaterCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-    public ReplaceIfGreaterCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public ReplaceIfGreaterCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public void execute(Request request) throws IOException, SQLException {
         String key = request.getParams().get(0);
         if (collectionManager.getStudyGroupList().containsKey(key)){
             StudyGroup studyGroup = request.getStudyGroup();
             studyGroup.setID(collectionManager.getStudyGroupList().get(key).getId());
-            if (studyGroup.compareTo(collectionManager.getStudyGroupList().get(key)) > 0){
+            if (studyGroup.compareTo(collectionManager.getStudyGroupList().get(key)) > 0 & dataBasesManager.allowModification(key, request.getLogin())){
+                dataBasesManager.updateStudyGroupKey(key, studyGroup);
                 collectionManager.updateStudyGroup(key, studyGroup);
                 RequestObj req = new RequestObj("заменил");
                 communication.send(req.serialize());
