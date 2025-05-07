@@ -59,7 +59,7 @@ public class Invoker {
         commands.put(TypeCommand.SHOW, new ShowCommand(collectionManager, communication));
         commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.UPDATE, new UpdateCommand(collectionManager, communication));
-        commands.put(TypeCommand.REMOVE_KEY, new RemoveKeyCommand(collectionManager, communication));
+        commands.put(TypeCommand.REMOVE_KEY, new RemoveKeyCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.CLEAR, new ClearCommand(collectionManager, communication, dataBasesManager));
         commands.put(TypeCommand.EXIT, new ExitCommand(collectionManager, communication));
         commands.put(TypeCommand.REMOVE_LOWER, new  RemoveLowerCommand(collectionManager, communication ));

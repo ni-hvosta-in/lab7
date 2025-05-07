@@ -1,24 +1,29 @@
 package nihvostain.commands;
 
+import common.exceptions.OtherUsersObject;
 import nihvostain.managers.CollectionManager;
 import nihvostain.managers.Communication;
+import nihvostain.managers.DataBasesManager;
 import nihvostain.utility.Command;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Удаление элемента по ключу
+ * Удаление элемента по ключу Модификация
  */
 public class RemoveKeyCommand implements Command {
 
     private final CollectionManager collectionManager;
     private final Communication communication;
-    public RemoveKeyCommand(CollectionManager collectionManager, Communication communication) {
+    private final DataBasesManager dataBasesManager;
+    public RemoveKeyCommand(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
     }
 
     /**
@@ -26,12 +31,27 @@ public class RemoveKeyCommand implements Command {
      */
     @Override
     public void execute(Request request) throws IOException {
-        if (collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin() != null) {
-            Person.removePassportID(collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin().getPassportID());
+
+        String response;
+        RequestObj req;
+        try {
+            if (dataBasesManager.allowModification(request.getParams().get(0), request.getLogin())) {
+                if (collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin() != null) {
+                    Person.removePassportID(collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin().getPassportID());
+                }
+                dataBasesManager.removeKey(request.getParams().get(0));
+                response = collectionManager.getStudyGroupList().get(request.getParams().get(0)).toString();
+                collectionManager.removeKey(request.getParams().get(0));
+                req = new RequestObj("удалил по ключу " + request.getParams().get(0) + "\n" + response );
+            } else {
+                response = "Это объект другого пользователя";
+                req = new RequestObj(response );
+            }
+        } catch (SQLException e) {
+            response = "Ошибка работы с бд";
+            req = new RequestObj(response);
         }
-        String response = collectionManager.getStudyGroupList().get(request.getParams().get(0)).toString();
-        collectionManager.removeKey(request.getParams().get(0));
-        RequestObj req = new RequestObj("удалил по ключу " + request.getParams().get(0) + "\n" + response );
+
         communication.send(req.serialize());
     }
 
