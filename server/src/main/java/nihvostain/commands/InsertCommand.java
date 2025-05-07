@@ -30,7 +30,7 @@ public class InsertCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public void execute(Request request) throws IOException, SQLException {
 
         String key = request.getParams().get(0);
         RequestObj req;
@@ -48,11 +48,7 @@ public class InsertCommand implements Command {
             System.out.println(e.getMessage());
             req = new RequestObj("Ошибка исполнения");
 
-        }  catch (SQLException e) {
-            req = new RequestObj("Ошибка записи в базу данных");
-            System.out.println("Ошибка записи в базу данных");
         }
-
         communication.send(req.serialize());
     }
 

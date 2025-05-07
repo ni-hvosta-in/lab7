@@ -31,26 +31,22 @@ public class ClearCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public void execute(Request request) throws IOException, SQLException {
 
         RequestObj req;
         ArrayList<String> keysToRemove = new ArrayList<>();
-        try {
-            for (String key : collectionManager.getStudyGroupList().keySet()) {
-                if (dataBasesManager.allowModification(key, request.getLogin())) {
-                    System.out.println(key);
-                    keysToRemove.add(key);
-                    dataBasesManager.removeKey(key);
-                }
+        for (String key : collectionManager.getStudyGroupList().keySet()) {
+            if (dataBasesManager.allowModification(key, request.getLogin())) {
+                System.out.println(key);
+                keysToRemove.add(key);
+                dataBasesManager.removeKey(key);
             }
-            for (String key : keysToRemove) {
-                collectionManager.removeKey(key);
-            }
-            req = new RequestObj("отчистил ваши объекты");
-        } catch (SQLException e){
-            req = new RequestObj("Ошибка удаления из базы данных");
-            System.out.println("Ошибка удаления из базы данных");
         }
+        for (String key : keysToRemove) {
+            collectionManager.removeKey(key);
+        }
+        req = new RequestObj("отчистил ваши объекты");
+
         communication.send(req.serialize());
     }
 

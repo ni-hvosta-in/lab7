@@ -5,6 +5,7 @@ import common.model.TypeOfElement;
 import common.utility.InvalidParamMessage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +16,7 @@ public interface Command {
      * Выполняет команду
      * @param request запрос с клиента
      */
-    void execute(Request request) throws IOException;
+    void execute(Request request) throws IOException, SQLException;
 
     /**
      * Возвращает описание

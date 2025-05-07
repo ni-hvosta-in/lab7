@@ -30,27 +30,24 @@ public class RemoveKeyCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public void execute(Request request) throws IOException, SQLException {
 
         String response;
         RequestObj req;
-        try {
-            if (dataBasesManager.allowModification(request.getParams().get(0), request.getLogin())) {
-                if (collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin() != null) {
-                    Person.removePassportID(collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin().getPassportID());
-                }
-                dataBasesManager.removeKey(request.getParams().get(0));
-                response = collectionManager.getStudyGroupList().get(request.getParams().get(0)).toString();
-                collectionManager.removeKey(request.getParams().get(0));
-                req = new RequestObj("удалил по ключу " + request.getParams().get(0) + "\n" + response );
-            } else {
-                response = "Это объект другого пользователя";
-                req = new RequestObj(response );
+
+        if (dataBasesManager.allowModification(request.getParams().get(0), request.getLogin())) {
+            if (collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin() != null) {
+                Person.removePassportID(collectionManager.getStudyGroupList().get(request.getParams().get(0)).getGroupAdmin().getPassportID());
             }
-        } catch (SQLException e) {
-            response = "Ошибка работы с бд";
-            req = new RequestObj(response);
+            dataBasesManager.removeKey(request.getParams().get(0));
+            response = collectionManager.getStudyGroupList().get(request.getParams().get(0)).toString();
+            collectionManager.removeKey(request.getParams().get(0));
+            req = new RequestObj("удалил по ключу " + request.getParams().get(0) + "\n" + response );
+        } else {
+            response = "Это объект другого пользователя";
+            req = new RequestObj(response );
         }
+
 
         communication.send(req.serialize());
     }

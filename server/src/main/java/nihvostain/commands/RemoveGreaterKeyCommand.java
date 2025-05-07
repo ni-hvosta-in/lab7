@@ -29,22 +29,20 @@ public class RemoveGreaterKeyCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public void execute(Request request) throws IOException, SQLException {
 
         String key = request.getParams().get(0);
         ArrayList<String> keyToRemove = new ArrayList<>();
-        try {
-            for (String k : collectionManager.getStudyGroupList().keySet()) {
-                if (k.compareTo(key) > 0 & dataBasesManager.allowModification(k, request.getLogin())){
-                    dataBasesManager.removeKey(k);
-                    keyToRemove.add(k);
-                }
+
+        for (String k : collectionManager.getStudyGroupList().keySet()) {
+            if (k.compareTo(key) > 0 & dataBasesManager.allowModification(k, request.getLogin())){
+                dataBasesManager.removeKey(k);
+                keyToRemove.add(k);
             }
-            keyToRemove.forEach(collectionManager::removeKey);
-            new ShowCommand(collectionManager, communication).execute(request);
-        } catch (SQLException e){
-            RequestObj requestObj = new RequestObj("Ошибка работы с БД");
         }
+        keyToRemove.forEach(collectionManager::removeKey);
+        new ShowCommand(collectionManager, communication).execute(request);
+
 
     }
 
