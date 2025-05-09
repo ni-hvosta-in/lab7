@@ -2,31 +2,28 @@ package nihvostain;
 
 import common.exceptions.InputFromScriptException;
 import common.exceptions.RecursionDepthExceededException;
-import nihvostain.managers.CollectionManager;
-import nihvostain.managers.Communication;
-import nihvostain.managers.DataBasesManager;
-import nihvostain.managers.Invoker;
+import nihvostain.managers.*;
 
 import java.io.IOException;
 import java.sql.*;
 
 public class Main {
-    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "1";
+    private static final String URL = "jdbc:postgresql://pg/studs";
+    private static final String USER = "s466207";
+    private static final String PASSWORD = "SRfU{1295";
     public static void main(String[] args) throws IOException, ClassNotFoundException, RecursionDepthExceededException, InputFromScriptException, SQLException {
 
-        byte[] serializeReq = new byte[1024];
-
         CollectionManager collectionManager = new CollectionManager();
-        DataBasesManager dataBasesManager = new DataBasesManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "1");
+        DataBasesManager dataBasesManager = new DataBasesManager(URL, USER, PASSWORD);
         collectionManager.loadDb(dataBasesManager);
         int serverPort = 9898;
         int bufferCapacity = 10000;
         Communication communication = new Communication(serverPort, bufferCapacity);
-        Invoker invoker = new Invoker(collectionManager, communication);
+        //Invoker invoker = new Invoker(collectionManager, communication, dataBasesManager);
+        MultiPoolServer multiPoolServer = new MultiPoolServer(collectionManager, communication, dataBasesManager);
         Class.forName("org.postgresql.Driver");
-        invoker.scanning();
+        multiPoolServer.scanning();
+        //invoker.scanning();
 
          /*
 

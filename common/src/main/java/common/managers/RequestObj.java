@@ -1,11 +1,13 @@
 package common.managers;
 
+import common.utility.RequestResponse;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class RequestObj implements Serializable {
+public class RequestObj implements Serializable, RequestResponse {
     private final Object request;
     public RequestObj(Object request) {
         this.request = request;

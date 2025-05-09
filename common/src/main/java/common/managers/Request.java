@@ -2,6 +2,7 @@ package common.managers;
 
 import common.model.Person;
 import common.model.StudyGroup;
+import common.utility.RequestResponse;
 import common.utility.TypeCommand;
 import common.utility.TypeRequest;
 
@@ -11,7 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Request implements Serializable {
+public class Request implements Serializable, RequestResponse {
 
     private TypeRequest typeRequest;
     private TypeCommand name;

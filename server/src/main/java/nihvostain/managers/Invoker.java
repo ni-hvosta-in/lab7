@@ -23,6 +23,8 @@ public class Invoker {
     private final CollectionManager collectionManager;
 
     private Communication communication;
+
+    private final DataBasesManager dataBasesManager;
     /*
      * Флаг файла
      */
@@ -37,9 +39,10 @@ public class Invoker {
     private static final int maxDepth = 10;
 
 
-    public Invoker(CollectionManager collectionManager, Communication communication) {
+    public Invoker(CollectionManager collectionManager, Communication communication, DataBasesManager dataBasesManager) {
         this.collectionManager = collectionManager;
         this.communication = communication;
+        this.dataBasesManager = dataBasesManager;
         depth+=1;
     }
 
@@ -54,7 +57,6 @@ public class Invoker {
             throw new RecursionDepthExceededException();
         }
         Map<TypeCommand, Command> commands = new LinkedHashMap<>();
-        DataBasesManager dataBasesManager = new DataBasesManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "1");
         commands.put(TypeCommand.INFO, new InfoCommand(collectionManager, communication));
         commands.put(TypeCommand.SHOW, new ShowCommand(collectionManager, communication));
         commands.put(TypeCommand.INSERT, new InsertCommand(collectionManager, communication, dataBasesManager));

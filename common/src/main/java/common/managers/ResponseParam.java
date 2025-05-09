@@ -1,13 +1,14 @@
 package common.managers;
 
 import common.utility.InvalidParamMessage;
+import common.utility.RequestResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class ResponseParam implements Serializable {
+public class ResponseParam implements Serializable, RequestResponse {
 
     private InvalidParamMessage param;
 

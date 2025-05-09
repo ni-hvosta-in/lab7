@@ -2,13 +2,14 @@ package common.managers;
 
 import common.utility.InvalidParamMessage;
 import common.utility.RegistrationMessage;
+import common.utility.RequestResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class ResponseRegistry implements Serializable {
+public class ResponseRegistry implements Serializable, RequestResponse {
 
     private RegistrationMessage message;
 
