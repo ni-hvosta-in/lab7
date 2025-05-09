@@ -26,7 +26,7 @@ public class ShowCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
 
         String show = "";
 
@@ -45,8 +45,7 @@ public class ShowCommand implements Command {
             show = "Коллекция пуста";
         }
 
-        RequestObj req = new RequestObj(show);
-        communication.send(req.serialize());
+        return new RequestObj(show);
     }
 
     /**

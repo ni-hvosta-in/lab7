@@ -29,7 +29,7 @@ public class GroupCountingBySemesterEnum implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
 
         List<StudyGroup> studyGroups = new ArrayList<>(collectionManager.getStudyGroupList().values());
         Collections.sort(studyGroups);
@@ -78,7 +78,8 @@ public class GroupCountingBySemesterEnum implements Command {
             }
         }
         System.out.println(ans);
-        communication.send(new RequestObj(ans).serialize());
+        return new RequestObj(ans);
+
     }
 
     /**

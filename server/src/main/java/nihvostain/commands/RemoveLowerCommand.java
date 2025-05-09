@@ -29,7 +29,7 @@ public class RemoveLowerCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
 
         //Map<String,StudyGroup> studyGroupList = new LinkedHashMap<>();
         //StudyGroup studyGroup = new StudyGroup(0L, args); ВНИМАНИЕ
@@ -56,7 +56,7 @@ public class RemoveLowerCommand implements Command {
                     });
             keyToRemove.forEach(collectionManager::removeKey);
 
-            new ShowCommand(collectionManager, communication).execute(request);
+            return new ShowCommand(collectionManager, communication).execute(request);
             /*
             for (Map.Entry<String, StudyGroup> pair : collectionManager.getStudyGroupList().entrySet()) {
                 if (studyGroup.compareTo(pair.getValue()) < 0){
@@ -68,7 +68,7 @@ public class RemoveLowerCommand implements Command {
         }
         else {
             System.out.println("Коллекция пуста");
-            communication.send(new RequestObj("Коллекция пуста").serialize());
+            return new RequestObj("Коллекция пуста");
         }
     }
 

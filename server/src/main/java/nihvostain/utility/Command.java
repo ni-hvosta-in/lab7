@@ -1,6 +1,7 @@
 package nihvostain.utility;
 
 import common.managers.Request;
+import common.managers.RequestObj;
 import common.model.TypeOfElement;
 import common.utility.InvalidParamMessage;
 
@@ -16,7 +17,7 @@ public interface Command {
      * Выполняет команду
      * @param request запрос с клиента
      */
-    void execute(Request request) throws IOException, SQLException;
+    RequestObj execute(Request request) throws IOException, SQLException;
 
     /**
      * Возвращает описание

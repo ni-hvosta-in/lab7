@@ -25,7 +25,7 @@ public class SaveCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) {
+    public RequestObj execute(Request request) {
         FileWriter fileWriter = new FileWriter(new StudyGroups(collectionManager.getStudyGroupList()));
         try {
             fileWriter.toXML(System.getenv("MY_VAR"));
@@ -35,6 +35,7 @@ public class SaveCommand implements Command {
             System.out.println("Коллекция записана в файл studygroupNotFromVAR");
             fileWriter.toXML("studygroupNotFromVAR");
         }
+        return new RequestObj("записал");
     }
 
     /**

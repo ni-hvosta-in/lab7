@@ -27,10 +27,9 @@ public class ExitCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
         new SaveCommand(collectionManager).execute(request);
-        RequestObj req = new RequestObj("Сохраняю коллекцию в файл");
-        communication.send(req.serialize());
+        return new RequestObj("Сохраняю коллекцию в файл");
     }
 
     /**

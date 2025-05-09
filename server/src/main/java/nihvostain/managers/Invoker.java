@@ -99,7 +99,8 @@ public class Invoker {
                     Command command = commands.get(request.getName());
                     if (command.isValidParam(request.getParams()) == InvalidParamMessage.TRUE) {
                         try {
-                            command.execute(request);
+                            RequestObj req = command.execute(request);
+                            communication.send(req.serialize());
                         } catch (SQLException e) {
                             System.out.println(e.getMessage());
                             communication.send(new RequestObj("Ошибка работы с бд").serialize());
@@ -124,9 +125,10 @@ public class Invoker {
                     }
 
                 } else if (request.getTypeRequest() == TypeRequest.REQUEST_REGISTRATION) {
+
                     if (!dataBasesManager.checkLogin(request.getParams().get(0))){
-                        communication.send(new ResponseRegistry(RegistrationMessage.REGISTRATION_SUCCESS).serialize());
                         dataBasesManager.insertUser(request.getParams().get(0), request.getParams().get(1));
+                        communication.send(new ResponseRegistry(RegistrationMessage.REGISTRATION_SUCCESS).serialize());
                     } else {
                         communication.send(new ResponseRegistry(RegistrationMessage.WRONG_LOGIN).serialize());
                     }
@@ -147,26 +149,6 @@ public class Invoker {
             } catch (ClassNotFoundException e) {
                 System.out.println("ошибка передачи данных с клиента");
             }
-
-
-            /*try {
-                request = new Deserialize<Request>(message).deserialize();
-                System.out.println("сериализовал req");
-            } catch (ClassNotFoundException | ClassCastException e) {
-                try {
-                    requestParam = new Deserialize<RequestParam>(message).deserialize();
-                    ResponseParam responseParam = new ResponseParam(commands.get(requestParam.getName()).isValidParam(requestParam.getParams()));
-                    System.out.println("отправил "+ Arrays.toString(responseParam.serialize()));
-                    communication.send(responseParam.serialize());
-
-                    continue;
-                } catch (ClassNotFoundException ex) {
-                    System.out.println("dksksk");
-                    continue;
-                }
-            }
-
-             */
 
         }
     }

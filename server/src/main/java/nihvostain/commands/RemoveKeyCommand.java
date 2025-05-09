@@ -30,7 +30,7 @@ public class RemoveKeyCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException, SQLException {
+    public RequestObj execute(Request request) throws IOException, SQLException {
 
         String response;
         RequestObj req;
@@ -48,8 +48,7 @@ public class RemoveKeyCommand implements Command {
             req = new RequestObj(response );
         }
 
-
-        communication.send(req.serialize());
+        return req;
     }
 
     /**

@@ -31,7 +31,7 @@ public class ClearCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException, SQLException {
+    public RequestObj execute(Request request) throws IOException, SQLException {
 
         RequestObj req;
         ArrayList<String> keysToRemove = new ArrayList<>();
@@ -46,8 +46,7 @@ public class ClearCommand implements Command {
             collectionManager.removeKey(key);
         }
         req = new RequestObj("отчистил ваши объекты");
-
-        communication.send(req.serialize());
+        return req;
     }
 
     /**

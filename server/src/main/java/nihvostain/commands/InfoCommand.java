@@ -25,10 +25,9 @@ public class InfoCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
         System.out.println(collectionManager.info());
-        RequestObj requestObj = new RequestObj(collectionManager.info());
-        communication.send(requestObj.serialize());
+        return new RequestObj(collectionManager.info());
     }
 
     /**

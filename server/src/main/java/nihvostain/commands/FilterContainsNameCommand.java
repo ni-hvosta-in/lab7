@@ -29,7 +29,7 @@ public class FilterContainsNameCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
 
         //stream
         String substring = request.getParams().get(0);
@@ -48,7 +48,7 @@ public class FilterContainsNameCommand implements Command {
         }
 
          */
-        communication.send(new RequestObj(ans).serialize());
+        return new RequestObj(ans);
 
     }
 

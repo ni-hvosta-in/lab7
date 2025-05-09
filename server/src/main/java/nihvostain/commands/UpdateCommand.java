@@ -31,7 +31,7 @@ public class UpdateCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException, SQLException {
+    public RequestObj execute(Request request) throws IOException, SQLException {
         try {
 
             long id = Long.parseLong(request.getParams().get(0));
@@ -53,11 +53,9 @@ public class UpdateCommand implements Command {
                         .limit(1)
                         .forEach(x -> collectionManager.updateStudyGroup(x.getKey(), studyGroup));
 
-                RequestObj req = new RequestObj("обновил id " + id + " " + studyGroup);
-                communication.send(req.serialize());
+                return new RequestObj("обновил id " + id + " " + studyGroup);
             } else {
-                RequestObj req = new RequestObj("объект принадлежит другому человеку");
-                communication.send(req.serialize());
+                return new RequestObj("объект принадлежит другому человеку");
             }
 
 
@@ -72,6 +70,7 @@ public class UpdateCommand implements Command {
              */
         } catch (NumberFormatException e){
             System.out.println("id введен не верно");
+            return new RequestObj("ошибка id");
         }
 
     }

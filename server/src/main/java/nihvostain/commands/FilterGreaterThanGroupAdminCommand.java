@@ -27,7 +27,7 @@ public class FilterGreaterThanGroupAdminCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException {
+    public RequestObj execute(Request request) throws IOException {
 
         Person person;
         if (request.getPerson() == null){
@@ -68,7 +68,8 @@ public class FilterGreaterThanGroupAdminCommand implements Command {
 
              */
         }
-        communication.send(new RequestObj(ans).serialize());
+        return new RequestObj(ans);
+
     }
 
     /**

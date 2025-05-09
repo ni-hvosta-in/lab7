@@ -29,7 +29,7 @@ public class RemoveGreaterKeyCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException, SQLException {
+    public RequestObj execute(Request request) throws IOException, SQLException {
 
         String key = request.getParams().get(0);
         ArrayList<String> keyToRemove = new ArrayList<>();
@@ -41,7 +41,7 @@ public class RemoveGreaterKeyCommand implements Command {
             }
         }
         keyToRemove.forEach(collectionManager::removeKey);
-        new ShowCommand(collectionManager, communication).execute(request);
+        return new ShowCommand(collectionManager, communication).execute(request);
 
 
     }

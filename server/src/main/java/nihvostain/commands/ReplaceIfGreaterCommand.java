@@ -29,7 +29,7 @@ public class ReplaceIfGreaterCommand implements Command {
      * @param request запрос с клиента
      */
     @Override
-    public void execute(Request request) throws IOException, SQLException {
+    public RequestObj execute(Request request) throws IOException, SQLException {
         String key = request.getParams().get(0);
         if (collectionManager.getStudyGroupList().containsKey(key)){
             StudyGroup studyGroup = request.getStudyGroup();
@@ -37,14 +37,12 @@ public class ReplaceIfGreaterCommand implements Command {
             if (studyGroup.compareTo(collectionManager.getStudyGroupList().get(key)) > 0 & dataBasesManager.allowModification(key, request.getLogin())){
                 dataBasesManager.updateStudyGroupKey(key, studyGroup);
                 collectionManager.updateStudyGroup(key, studyGroup);
-                RequestObj req = new RequestObj("заменил");
-                communication.send(req.serialize());
+                return new RequestObj("заменил");
             } else {
-                RequestObj req = new RequestObj("не заменил");
-                communication.send(req.serialize());
+                return new RequestObj("не заменил");
             }
         } else {
-            System.out.println("Такого ключа не существует");
+            return new RequestObj("Такого ключа не существует");
         }
     }
 
