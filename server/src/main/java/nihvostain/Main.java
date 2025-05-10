@@ -9,12 +9,15 @@ import java.sql.*;
 
 public class Main {
     private static final String URL = "jdbc:postgresql://pg/studs";
-    private static final String USER = "s466207";
-    private static final String PASSWORD = "SRfU{1295";
+
     public static void main(String[] args) throws IOException, ClassNotFoundException, RecursionDepthExceededException, InputFromScriptException, SQLException {
 
+        //private static final String USER = "s466207";
+        //private static final String PASSWORD = "jM1BOxbOGjPn4GpU";
+        String username = System.getenv("username");
+        String password = System.getenv("password");
         CollectionManager collectionManager = new CollectionManager();
-        DataBasesManager dataBasesManager = new DataBasesManager(URL, USER, PASSWORD);
+        DataBasesManager dataBasesManager = new DataBasesManager(URL, username, password);
         collectionManager.loadDb(dataBasesManager);
         int serverPort = 9898;
         int bufferCapacity = 10000;

@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -22,7 +23,7 @@ public class CollectionManager {  //receiver
 
     private Map <String, StudyGroup> studyGroupList = new LinkedHashMap<>();
     final LocalDateTime initializationDate = LocalDateTime.now();
-
+    private final ReentrantLock lock = new ReentrantLock();
 
     public Map <String, StudyGroup> getStudyGroupList() {
         return studyGroupList;
@@ -85,8 +86,11 @@ public class CollectionManager {  //receiver
      * информация о коллекции
      */
     public String info(){
+
         String info = "";
+        lock.lock();
         info += "Тип коллекции: " + studyGroupList.getClass().getName() + "\n";
+        lock.unlock();
         info += "Дата инициализации: " + initializationDate+ "\n";
         info += "Кол-во элементов в коллекции: " + studyGroupList.size();
         return info;
@@ -99,12 +103,14 @@ public class CollectionManager {  //receiver
      * @throws ExistingKeyException существующий ключ
      */
     public void insert(String key, StudyGroup studyGroup) throws ExistingKeyException {
+        lock.lock();
         if (!studyGroupList.containsKey(key)){
             studyGroup.generateFields();
             studyGroupList.put(key, studyGroup);
         } else {
             throw new ExistingKeyException();
         }
+        lock.unlock();
 
     }
 
@@ -115,8 +121,9 @@ public class CollectionManager {  //receiver
      * @param studyGroup учебная группа
      */
     public void updateStudyGroup(String key, StudyGroup studyGroup){
+        lock.lock();
         studyGroupList.put(key, studyGroup);
-
+        lock.unlock();
     }
 
     /**
@@ -124,24 +131,34 @@ public class CollectionManager {  //receiver
      * @param key ключ
      */
     public void removeKey(String key){
+        lock.lock();
         studyGroupList.remove(key);
+        lock.unlock();
     }
 
     /**
      * Отчистит коллекцию
      */
     public void clear(){
+        lock.lock();
         studyGroupList.clear();
+        lock.unlock();
         Person.removeAllPassportIDs();
+
     }
     public Map<String, StudyGroup> getSortedStudyGroupList() {
-        return studyGroupList.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldVal, newVal) -> oldVal,
-                        LinkedHashMap::new));
+        lock.lock();
+        try {
+            return studyGroupList.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (oldVal, newVal) -> oldVal,
+                            LinkedHashMap::new));
+        } finally {
+            lock.unlock();
+        }
     }
 
 }
